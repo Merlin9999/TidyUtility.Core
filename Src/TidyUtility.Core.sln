@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TidyUtility.Core", "TidyUti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TidyUtility.Tests", "TidyUtility.Tests\TidyUtility.Tests.csproj", "{692662FF-7B69-405D-824F-37ABF54A1CD8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "Build\_build.csproj", "{1486EF21-A465-4581-A605-D1A5F71AB0FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "..\Build\_build.csproj", "{1486EF21-A465-4581-A605-D1A5F71AB0FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
