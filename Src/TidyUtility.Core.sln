@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TidyUtility.Core", "TidyUti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TidyUtility.Tests", "TidyUtility.Tests\TidyUtility.Tests.csproj", "{692662FF-7B69-405D-824F-37ABF54A1CD8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "..\Build\_build.csproj", "{1486EF21-A465-4581-A605-D1A5F71AB0FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "..\build\_build.csproj", "{A0E6C53F-9131-438B-92DD-8099E6AD3963}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +15,8 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A0E6C53F-9131-438B-92DD-8099E6AD3963}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0E6C53F-9131-438B-92DD-8099E6AD3963}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35D686B9-A3DC-0D15-46A7-1BEF3B73319A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{35D686B9-A3DC-0D15-46A7-1BEF3B73319A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35D686B9-A3DC-0D15-46A7-1BEF3B73319A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -23,8 +25,6 @@ Global
 		{692662FF-7B69-405D-824F-37ABF54A1CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{692662FF-7B69-405D-824F-37ABF54A1CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{692662FF-7B69-405D-824F-37ABF54A1CD8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1486EF21-A465-4581-A605-D1A5F71AB0FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1486EF21-A465-4581-A605-D1A5F71AB0FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
