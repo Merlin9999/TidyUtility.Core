@@ -195,7 +195,9 @@ class Build : NukeBuild
                 .SetVersionPrefix(GitVersion.MajorMinorPatch)
                 .SetVersionSuffix(GitVersion.PreReleaseTag)
                 .AddProperty("IncludeSourceRevisionInInformationalVersion", Configuration != Configuration.Release)
-                .SetOutputDirectory(OutputDirectory));
+                .SetOutputDirectory(OutputDirectory)
+                .SetVerbosity(DotNetVerbosity.detailed)
+            );
         });
 
     Target PublishToLocalNuGet => _ => _
