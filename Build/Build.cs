@@ -1,25 +1,16 @@
 using System;
-using System.Linq;
+using System.Globalization;
+using System.IO;
+using System.Web;
 using Nuke.Common;
-using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
-using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Web;
 using Serilog;
-using static Nuke.Common.EnvironmentInfo;
-using static Nuke.Common.IO.FileSystemTasks;
-using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 // Nuke Build Documentation: https://nuke.build/docs/introduction/
@@ -145,6 +136,12 @@ class Build : NukeBuild
             //    .SetConfiguration(Configuration)
             //    .EnableNoRestore());
 
+
+            Log.Information($"In {nameof(Compile)} Target");
+
+            Log.Information($"     Solution: {Solution}");
+            Log.Information($"Configuration: {Configuration}");
+
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
@@ -177,8 +174,17 @@ class Build : NukeBuild
         //.Produces(OutputDirectory / "*.nupkg")
         .Executes(() =>
         {
+            Log.Information($"In {nameof(Pack)} Target");
+
+            Log.Information($"       Solution: {Solution}");
+            Log.Information($"  Configuration: {Configuration}");
+
+            Project tidyUtilityCoreCsproj = Solution.GetProject("TidyUtility.Core");
+            Log.Information($"        Project: {tidyUtilityCoreCsproj}");
+            Log.Information($"OutputDirectory: {OutputDirectory}");
+
             DotNetPack(cfg => cfg
-                .SetProject(Solution.GetProject("TidyUtility.Core")?.Path ?? "<Project Not Found>")
+                .SetProject(tidyUtilityCoreCsproj?.Path ?? "<Project Not Found>")
                 .SetConfiguration(Configuration)
                 .EnableNoRestore()
                 .EnableNoBuild()
@@ -189,8 +195,7 @@ class Build : NukeBuild
                 .SetVersionPrefix(GitVersion.MajorMinorPatch)
                 .SetVersionSuffix(GitVersion.PreReleaseTag)
                 .AddProperty("IncludeSourceRevisionInInformationalVersion", Configuration != Configuration.Release)
-                .SetOutputDirectory(OutputDirectory)
-            );
+                .SetOutputDirectory(OutputDirectory));
         });
 
     Target PublishToLocalNuGet => _ => _
