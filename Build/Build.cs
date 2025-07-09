@@ -136,12 +136,6 @@ class Build : NukeBuild
             //    .SetConfiguration(Configuration)
             //    .EnableNoRestore());
 
-
-            Log.Information($"In {nameof(Compile)} Target");
-
-            Log.Information($"     Solution: {Solution}");
-            Log.Information($"Configuration: {Configuration}");
-
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
@@ -153,20 +147,19 @@ class Build : NukeBuild
                 .SetVersionPrefix(GitVersion.MajorMinorPatch)
                 .SetVersionSuffix(GitVersion.PreReleaseTag)
                 .AddProperty("IncludeSourceRevisionInInformationalVersion", Configuration != Configuration.Release));
-
         });
 
     Target UnitTest => _ => _
-    .DependsOn(Compile)
-    .Executes(() =>
-    {
-        DotNetTest(x => x
-            .SetProjectFile(Solution)
-            .SetConfiguration(Configuration)
-            .EnableNoRestore()
-            .EnableNoBuild()
-        );
-    });
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            DotNetTest(x => x
+                .SetProjectFile(Solution)
+                .SetConfiguration(Configuration)
+                .EnableNoRestore()
+                .EnableNoBuild()
+            );
+        });
 
     Target Pack => _ => _
         .DependsOn(Clean)
@@ -174,17 +167,8 @@ class Build : NukeBuild
         //.Produces(OutputDirectory / "*.nupkg")
         .Executes(() =>
         {
-            Log.Information($"In {nameof(Pack)} Target");
-
-            Log.Information($"       Solution: {Solution}");
-            Log.Information($"  Configuration: {Configuration}");
-
-            Project tidyUtilityCoreCsproj = Solution.GetProject("TidyUtility.Core");
-            Log.Information($"        Project: {tidyUtilityCoreCsproj}");
-            Log.Information($"OutputDirectory: {OutputDirectory}");
-
             DotNetPack(cfg => cfg
-                .SetProject(tidyUtilityCoreCsproj?.Path ?? "<Project Not Found>")
+                .SetProject(Solution.GetProject("TidyUtility.Core")?.Path ?? "<Project Not Found>")
                 .SetConfiguration(Configuration)
                 .EnableNoRestore()
                 .EnableNoBuild()
@@ -196,7 +180,6 @@ class Build : NukeBuild
                 .SetVersionSuffix(GitVersion.PreReleaseTag)
                 .AddProperty("IncludeSourceRevisionInInformationalVersion", Configuration != Configuration.Release)
                 .SetOutputDirectory(OutputDirectory)
-                .SetVerbosity(DotNetVerbosity.detailed)
             );
         });
 
