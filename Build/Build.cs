@@ -1,25 +1,16 @@
 using System;
-using System.Linq;
+using System.Globalization;
+using System.IO;
+using System.Web;
 using Nuke.Common;
-using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
-using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Web;
 using Serilog;
-using static Nuke.Common.EnvironmentInfo;
-using static Nuke.Common.IO.FileSystemTasks;
-using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 // Nuke Build Documentation: https://nuke.build/docs/introduction/
@@ -156,20 +147,19 @@ class Build : NukeBuild
                 .SetVersionPrefix(GitVersion.MajorMinorPatch)
                 .SetVersionSuffix(GitVersion.PreReleaseTag)
                 .AddProperty("IncludeSourceRevisionInInformationalVersion", Configuration != Configuration.Release));
-
         });
 
     Target UnitTest => _ => _
-    .DependsOn(Compile)
-    .Executes(() =>
-    {
-        DotNetTest(x => x
-            .SetProjectFile(Solution)
-            .SetConfiguration(Configuration)
-            .EnableNoRestore()
-            .EnableNoBuild()
-        );
-    });
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            DotNetTest(x => x
+                .SetProjectFile(Solution)
+                .SetConfiguration(Configuration)
+                .EnableNoRestore()
+                .EnableNoBuild()
+            );
+        });
 
     Target Pack => _ => _
         .DependsOn(Clean)
