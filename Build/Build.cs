@@ -147,6 +147,7 @@ class Build : NukeBuild
                 .SetVersionPrefix(GitVersion.MajorMinorPatch)
                 .SetVersionSuffix(GitVersion.PreReleaseTag)
                 .AddProperty("IncludeSourceRevisionInInformationalVersion", Configuration != Configuration.Release));
+
         });
 
     Target UnitTest => _ => _
@@ -257,7 +258,7 @@ class Build : NukeBuild
     {
         CultureInfo enUS = new CultureInfo("en-US");
         DateTime date = DateTime.ParseExact(GitVersion.CommitDate, "yyyy-MM-dd", enUS, DateTimeStyles.None);
-        string copyright = $"Copyright (c) {date.Year} Marc Behnke, All Rights Reserved"
+        string copyright = $"Copyright (c) {date.Year} Marc Behnke"
             .Replace(",", HttpUtility.UrlEncode(","));
         return copyright;
     }
