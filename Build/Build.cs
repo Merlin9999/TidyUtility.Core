@@ -181,6 +181,8 @@ class Build : NukeBuild
                 .SetVersion(GetSafeNuGetVersion())
                 //.SetVersionPrefix(GitVersion.MajorMinorPatch)
                 //.SetVersionSuffix(GitVersion.PreReleaseTag)
+                
+                .EnableIncludeSymbols()
 
                 .SetAssemblyVersion(GitVersion.AssemblySemVer)
                 .SetFileVersion(GitVersion.AssemblySemFileVer)
@@ -196,7 +198,7 @@ class Build : NukeBuild
         .Executes(() =>
         {
             LocalNuGetSourceDirectory.CreateDirectory();
-            OutputDirectory.GlobFiles("*.nupkg")
+            OutputDirectory.GlobFiles("*.nupkg", "*.snupkg")
                 .ForEach(pkgFile => File.Copy(pkgFile, LocalNuGetSourceDirectory / pkgFile.Name, true));
         });
 
