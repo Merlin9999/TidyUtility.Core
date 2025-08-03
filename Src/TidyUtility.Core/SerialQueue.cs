@@ -1,5 +1,6 @@
 ﻿ #nullable disable
  using System;
+ using System.Threading;
  using System.Threading.Tasks;
 
  namespace TidyUtility.Core
@@ -18,7 +19,7 @@
     // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     // copies of the Software, and to permit persons to whom the Software is
     // furnished to do so, subject to the following conditions:
- 
+
     // The above copyright notice and this permission notice shall be included in all
     // copies or substantial portions of the Software.
 
@@ -33,25 +34,49 @@
 
     public class SerialQueue
     {
-        readonly object _locker = new object();
-        WeakReference<Task> _lastTask;
+        SpinLock _spinLock = new(false);
+        readonly WeakReference<Task?> _lastTask = new(null);
 
         public Task Enqueue(Action action)
         {
-            return this.Enqueue<bool>(() => {
-                action();
-                return true;
-            });
+            bool gotLock = false;
+            try
+            {
+                Task? lastTask;
+                Task resultTask;
+
+                _spinLock.Enter(ref gotLock);
+
+                if (_lastTask.TryGetTarget(out lastTask))
+                {
+                    resultTask = lastTask.ContinueWith(_ => action(), TaskContinuationOptions.ExecuteSynchronously);
+                }
+                else
+                {
+                    resultTask = Task.Run(action);
+                }
+
+                _lastTask.SetTarget(resultTask);
+
+                return resultTask;
+            }
+            finally
+            {
+                if (gotLock) _spinLock.Exit(false);
+            }
         }
 
         public Task<T> Enqueue<T>(Func<T> function)
         {
-            lock (this._locker)
+            bool gotLock = false;
+            try
             {
-                Task lastTask = null;
-                Task<T> resultTask = null;
+                Task? lastTask;
+                Task<T> resultTask;
 
-                if (this._lastTask != null && this._lastTask.TryGetTarget(out lastTask))
+                _spinLock.Enter(ref gotLock);
+
+                if (_lastTask.TryGetTarget(out lastTask))
                 {
                     resultTask = lastTask.ContinueWith(_ => function(), TaskContinuationOptions.ExecuteSynchronously);
                 }
@@ -60,19 +85,27 @@
                     resultTask = Task.Run(function);
                 }
 
-                this._lastTask = new WeakReference<Task>(resultTask);
+                _lastTask.SetTarget(resultTask);
+
                 return resultTask;
+            }
+            finally
+            {
+                if (gotLock) _spinLock.Exit(false);
             }
         }
 
         public Task Enqueue(Func<Task> asyncAction)
         {
-            lock (this._locker)
+            bool gotLock = false;
+            try
             {
-                Task lastTask = null;
-                Task resultTask = null;
+                Task? lastTask;
+                Task resultTask;
 
-                if (this._lastTask != null && this._lastTask.TryGetTarget(out lastTask))
+                _spinLock.Enter(ref gotLock);
+
+                if (_lastTask.TryGetTarget(out lastTask))
                 {
                     resultTask = lastTask.ContinueWith(_ => asyncAction(), TaskContinuationOptions.ExecuteSynchronously).Unwrap();
                 }
@@ -81,19 +114,27 @@
                     resultTask = Task.Run(asyncAction);
                 }
 
-                this._lastTask = new WeakReference<Task>(resultTask);
+                _lastTask.SetTarget(resultTask);
+
                 return resultTask;
+            }
+            finally
+            {
+                if (gotLock) _spinLock.Exit(false);
             }
         }
 
         public Task<T> Enqueue<T>(Func<Task<T>> asyncFunction)
         {
-            lock (this._locker)
+            bool gotLock = false;
+            try
             {
-                Task lastTask = null;
-                Task<T> resultTask = null;
+                Task? lastTask;
+                Task<T> resultTask;
 
-                if (this._lastTask != null && this._lastTask.TryGetTarget(out lastTask))
+                _spinLock.Enter(ref gotLock);
+
+                if (_lastTask.TryGetTarget(out lastTask))
                 {
                     resultTask = lastTask.ContinueWith(_ => asyncFunction(), TaskContinuationOptions.ExecuteSynchronously).Unwrap();
                 }
@@ -102,8 +143,13 @@
                     resultTask = Task.Run(asyncFunction);
                 }
 
-                this._lastTask = new WeakReference<Task>(resultTask);
+                _lastTask.SetTarget(resultTask);
+
                 return resultTask;
+            }
+            finally
+            {
+                if (gotLock) _spinLock.Exit(false);
             }
         }
     }
